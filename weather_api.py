@@ -37,6 +37,12 @@ def get_weather(city):
 
     data = requests.get(url, params=params).json()
 
+    print(data) #для логов
+
+    # ✅ ВОТ ЭТА СТРОКА РЕШАЕТ ПРОБЛЕМУ
+    if "current_weather" not in data:
+        return "Ошибка получения погоды 😢 Попробуй позже"
+
     # температура
     temp = data["current_weather"]["temperature"]
 
@@ -64,6 +70,10 @@ def get_raw_weather(city):
     }
 
     data = requests.get(url, params=params).json()
+
+    # ✅ ВОТ ЭТА СТРОКА РЕШАЕТ ПРОБЛЕМУ
+    if "current_weather" not in data:
+        return 0, 0
 
     temp = data["current_weather"]["temperature"]
     humidity = data["hourly"]["relativehumidity_2m"][0]
