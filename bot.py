@@ -7,6 +7,10 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(b"OK")
 
+    def do_HEAD(self):  # ✅ добавь это
+        self.send_response(200)
+        self.end_headers()
+
 def run_server():
     server = HTTPServer(("0.0.0.0", 10000), Handler)
     server.serve_forever()
