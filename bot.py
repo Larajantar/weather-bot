@@ -1,5 +1,6 @@
-
 import os
+IS_MAIN = os.environ.get("RENDER_INSTANCE_ID") is None
+
 import asyncio
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -45,6 +46,11 @@ async def echo(msg: types.Message):
 async def main():
     print("BOT STARTED")
 
+    if not IS_MAIN:
+        print("NOT MAIN INSTANCE — sleeping")
+        while True:
+            await asyncio.sleep(60)
+
     while True:
         try:
             await bot.delete_webhook(drop_pending_updates=True)
@@ -55,7 +61,6 @@ async def main():
         except Exception as e:
             print("POLLING ERROR:", e)
             await asyncio.sleep(5)
-
 
 # ======================
 # RUN
