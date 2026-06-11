@@ -45,10 +45,16 @@ async def echo(msg: types.Message):
 async def main():
     print("BOT STARTED")
 
-    await bot.delete_webhook(drop_pending_updates=True)
-    print("WEBHOOK CLEARED")
+    while True:
+        try:
+            await bot.delete_webhook(drop_pending_updates=True)
+            print("WEBHOOK CLEARED")
 
-    await dp.start_polling(bot)
+            await dp.start_polling(bot)
+
+        except Exception as e:
+            print("POLLING ERROR:", e)
+            await asyncio.sleep(5)
 
 
 # ======================
