@@ -74,5 +74,8 @@ async def fallback(msg: types.Message):
     await msg.answer("Выбери кнопку ниже")
 
 #запуск
+import time
+
 if __name__ == "__main__":
-    executor.start_polling(dp)
+    time.sleep(5)
+    executor.start_polling(dp, skip_updates=True)
