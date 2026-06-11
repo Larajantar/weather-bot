@@ -3,6 +3,7 @@ IS_MAIN = os.environ.get("RENDER_INSTANCE_ID") is None
 
 import asyncio
 import threading
+import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from aiogram import Bot, Dispatcher, types
