@@ -89,6 +89,8 @@ def get_raw_weather(city):
         response = requests.get(url, params=params, timeout=5)
         response.raise_for_status()
         data = response.json()
+        print("API DATA:", data)
+
     except Exception as e:
         print("Ошибка запроса:", e)
         return 0, 0
