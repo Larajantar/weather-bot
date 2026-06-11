@@ -23,6 +23,21 @@ def get_weather_description(code):
     }
     return weather_codes.get(code, "Неизвестно")
 
+# ✅ универсальная функция получения влажности
+def get_current_humidity(data):
+    if "hourly" not in data or "time" not in data["hourly"]:
+        return 0
+
+    current_time = data["current"]["time"]
+    times = data["hourly"]["time"]
+
+    if current_time in times:
+        index = times.index(current_time)
+        return data["hourly"]["relativehumidity_2m"][index]
+
+    return data["hourly"]["relativehumidity_2m"][0]
+
+# ✅ основная функция
 def get_weather(city):
     lat, lon = CITIES[city]
 
@@ -32,26 +47,27 @@ def get_weather(city):
         "latitude": lat,
         "longitude": lon,
         "current": "temperature_2m,weathercode",
-        "hourly": "relativehumidity_2m,weathercode"
+        "hourly": "relativehumidity_2m"
     }
 
-    data = requests.get(url, params=params).json()
+    try:
+        response = requests.get(url, params=params, timeout=5)
+        response.raise_for_status()
+        data = response.json()
+    except Exception as e:
+        print("Ошибка запроса:", e)
+        return "Ошибка получения погоды 😢 Попробуй позже"
 
-    print(data) #для логов
-
-    # ✅ ВОТ ЭТА СТРОКА РЕШАЕТ ПРОБЛЕМУ
     if "current" not in data:
         return "Ошибка получения погоды 😢 Попробуй позже"
 
     # температура
-    temp = data["current_weather"]["temperature_2m"]
+    temp = data["current"]["temperature_2m"]
 
     # код погоды
     weather_code = data["current"]["weathercode"]
     weather_desc = get_weather_description(weather_code)
-
-    # влажность (берём текущий час)
-    humidity = data["hourly"]["relativehumidity_2m"][0]
+    humidity = get_current_humidity(data)
 
     return f"""{city}
     🌡 Температура: {temp}°C
@@ -65,17 +81,22 @@ def get_raw_weather(city):
     params = {
         "latitude": lat,
         "longitude": lon,
-        "current": "temperature_2m,weathercode"
+        "current": "temperature_2m,weathercode",
         "hourly": "relativehumidity_2m"
     }
 
-    data = requests.get(url, params=params).json()
+    try:
+        response = requests.get(url, params=params, timeout=5)
+        response.raise_for_status()
+        data = response.json()
+    except Exception as e:
+        print("Ошибка запроса:", e)
+        return 0, 0
 
-    # ✅ ВОТ ЭТА СТРОКА РЕШАЕТ ПРОБЛЕМУ
     if "current" not in data:
         return 0, 0
 
-    temp = data["current"]["temperature_2m"]
-    humidity = data["hourly"]["relativehumidity_2m"][0]
+    temp = data["current"]["temperature_2m"]   
+    humidity = get_current_humidity(data)
 
     return temp, humidity
