@@ -68,9 +68,15 @@ async def main():
 if __name__ == "__main__":
     print("MAIN START")
 
-    # старт сервера (обязательно для Render)
-    thread = threading.Thread(target=run_server)
-    thread.daemon = True
+    thread = threading.Thread(target=run_server, daemon=True)
     thread.start()
 
-    asyncio.run(main())
+    time.sleep(1)
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    print("STARTING BOT LOOP")
+
+    loop.run_until_complete(main())
+
