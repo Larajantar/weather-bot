@@ -15,9 +15,13 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
 
 def run_server():
-    print("HTTP SERVER STARTING on port", PORT)  # 👈 лог запуска
-    server = HTTPServer(("0.0.0.0", PORT), Handler)
-    server.serve_forever()
+    print("HTTP SERVER STARTING")
+    try:
+        server = HTTPServer(("0.0.0.0", PORT), Handler)
+        print("HTTP SERVER STARTED ON", PORT)
+        server.serve_forever()
+    except Exception as e:
+        print("SERVER ERROR:", e)
 
 print("BOT FILE STARTED")
 from aiogram import Bot, Dispatcher, types
