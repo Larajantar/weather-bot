@@ -51,19 +51,24 @@ async def echo(msg: types.Message):
 # ======================
 # MAIN
 # ======================
+
 async def main():
     print("BOT STARTED")
 
-    await bot.delete_webhook(drop_pending_updates=True)
-    print("WEBHOOK CLEARED")
+    try:
+        await bot.delete_webhook(drop_pending_updates=True)
+        print("WEBHOOK CLEARED")
 
-    # запускаем сервер в фоне через asyncio
-    loop = asyncio.get_running_loop()
-    loop.run_in_executor(None, run_http_server)
+        loop = asyncio.get_running_loop()
+        loop.run_in_executor(None, run_http_server)
 
-    # запускаем бота
-    await dp.start_polling(bot)
+        print("START POLLING")
 
+        await dp.start_polling(bot)
+
+    except Exception as e:
+        print("MAIN ERROR:", e)
+        raise
 
 # ======================
 # RUN
