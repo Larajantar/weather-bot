@@ -73,10 +73,16 @@ async def fallback(msg: types.Message):
 #запуск
 import asyncio
 import time
+from aiogram.utils.exceptions import TerminatedByOtherGetUpdates
 
 async def main():
-    await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot)
+    while True:
+        try:
+            await bot.delete_webhook(drop_pending_updates=True)
+            await dp.start_polling(bot)
+        except TerminatedByOtherGetUpdates:
+            print("Другой процесс ещё жив, ждём...")
+            await asyncio.sleep(5)
 
 if __name__ == "__main__":
     time.sleep(10)
