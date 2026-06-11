@@ -99,9 +99,10 @@ async def main():
     while True:
         try:
             await bot.delete_webhook(drop_pending_updates=True)
+            print("WEBHOOK DELETED")
             await dp.start_polling(bot)
         except TerminatedByOtherGetUpdates:
-            print("Другой процесс ещё жив, ждём...")
+            print("Ждем конфликт...")
             await asyncio.sleep(5)
 
 if __name__ == "__main__":
