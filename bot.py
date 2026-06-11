@@ -115,6 +115,10 @@ async def main():
             await asyncio.sleep(5)
 
 if __name__ == "__main__":
-    threading.Thread(target=run_server, daemon=True).start()
-    time.sleep(10)
+    print("MAIN START")
+    threading.Thread(target=run_server)
+    thread.daemon=True
+    thread.start()
+    time.sleep(2)
+    print("STARTING BOT"
     asyncio.run(main())
