@@ -65,17 +65,19 @@ async def handle_city(msg: types.Message):
     result = get_weather(msg.text)
     await msg.answer(result)
 
-
-
-
 #если ошибка
 @dp.message_handler()
 async def fallback(msg: types.Message):
     await msg.answer("Выбери кнопку ниже")
 
 #запуск
+import asyncio
 import time
 
+async def main():
+    await bot.delete_webhook(drop_pending_updates=True)
+    await dp.start_polling(bot)
+
 if __name__ == "__main__":
-    time.sleep(5)
-    executor.start_polling(dp, skip_updates=True)
+    time.sleep(10)
+    asyncio.run(main())
