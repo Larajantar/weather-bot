@@ -1,6 +1,9 @@
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
+import os
+PORT = int(os.environ.get("PORT", 10000))
+
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -12,14 +15,13 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
 
 def run_server():
-    server = HTTPServer(("0.0.0.0", 10000), Handler)
+    print("HTTP SERVER STARTING on port", PORT)  # 👈 лог запуска
+    server = HTTPServer(("0.0.0.0", PORT), Handler)
     server.serve_forever()
-
-threading.Thread(target=run_server, daemon=True).start()
 
 print("BOT FILE STARTED")
 from aiogram import Bot, Dispatcher, types
-from aiogram.utils import executor
+#from aiogram.utils import executor
 from config import BOT_TOKEN
 print("TOKEN:", BOT_TOKEN)
 from weather_api import get_weather,get_raw_weather
@@ -109,5 +111,6 @@ async def main():
             await asyncio.sleep(5)
 
 if __name__ == "__main__":
+    threading.Thread(target=run_server, daemon=True).start()
     time.sleep(10)
     asyncio.run(main())
