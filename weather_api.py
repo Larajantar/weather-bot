@@ -31,7 +31,7 @@ def get_weather(city):
     params = {
         "latitude": lat,
         "longitude": lon,
-        "current_weather": True,
+        "current": "temperature_2m,weathercode",
         "hourly": "relativehumidity_2m,weathercode"
     }
 
@@ -40,14 +40,14 @@ def get_weather(city):
     print(data) #для логов
 
     # ✅ ВОТ ЭТА СТРОКА РЕШАЕТ ПРОБЛЕМУ
-    if "current_weather" not in data:
+    if "current" not in data:
         return "Ошибка получения погоды 😢 Попробуй позже"
 
     # температура
-    temp = data["current_weather"]["temperature"]
+    temp = data["current_weather"]["temperature_2m"]
 
     # код погоды
-    weather_code = data["current_weather"]["weathercode"]
+    weather_code = data["current"]["weathercode"]
     weather_desc = get_weather_description(weather_code)
 
     # влажность (берём текущий час)
@@ -65,17 +65,17 @@ def get_raw_weather(city):
     params = {
         "latitude": lat,
         "longitude": lon,
-        "current_weather": True,
+        "current": "temperature_2m,weathercode"
         "hourly": "relativehumidity_2m"
     }
 
     data = requests.get(url, params=params).json()
 
     # ✅ ВОТ ЭТА СТРОКА РЕШАЕТ ПРОБЛЕМУ
-    if "current_weather" not in data:
+    if "current" not in data:
         return 0, 0
 
-    temp = data["current_weather"]["temperature"]
+    temp = data["current"]["temperature_2m"]
     humidity = data["hourly"]["relativehumidity_2m"][0]
 
     return temp, humidity
