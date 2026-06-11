@@ -121,5 +121,5 @@ if __name__ == "__main__":
     thread.daemon=True
     thread.start()
     time.sleep(2)
-    print("STARTING BOT"
+    print("STARTING BOT")
     asyncio.run(main())
