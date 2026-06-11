@@ -17,12 +17,15 @@ def run_server():
 
 threading.Thread(target=run_server, daemon=True).start()
 
+print("BOT FILE STARTED")
 from aiogram import Bot, Dispatcher, types
 from aiogram.utils import executor
 from config import BOT_TOKEN
+print("TOKEN:", BOT_TOKEN)
 from weather_api import get_weather,get_raw_weather
 
 bot = Bot(token=BOT_TOKEN)
+print("CREATED BOT")
 dp = Dispatcher(bot)
 user_compare = {}
 
