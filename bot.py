@@ -95,6 +95,7 @@ import time
 from aiogram.utils.exceptions import TerminatedByOtherGetUpdates
 
 async def main():
+    print("START POLLING")  
     while True:
         try:
             await bot.delete_webhook(drop_pending_updates=True)
