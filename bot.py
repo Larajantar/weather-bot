@@ -78,12 +78,15 @@ def run_http_server():
 @dp.message_handler(commands=['start'])
 async def start(msg: types.Message):
     kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    kb.add("Москва", "Одинцово", "Питер", "Гатчина")
+    kb.add("Москва", "Одинцово", "Питер", "Гатчина", "Ростов-на-Дону","Севастополь")
     kb.add("Сравнить города")
 
     await bot.send_message(
         chat_id=msg.chat.id,
-        text="Выбери город или режим:",
+        text= (
+			"Выбери город или режим:\n"
+			"💡 Можно ввести ЛЮБОЙ город (на русском или английском)"
+		),
         reply_markup=kb
     )
 
@@ -174,7 +177,8 @@ async def handle_city(msg: types.Message):
 async def fallback(msg: types.Message):
     await bot.send_message(
         chat_id=msg.chat.id,
-        text="Выбери кнопку ниже"
+        text="💡 Напиши название города (например: Париж или London)\n"
+				"или выбери кнопку"
     )
 
 async def main():
