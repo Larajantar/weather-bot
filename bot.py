@@ -100,6 +100,7 @@ async def main():
     global loop                                          # говорим, что будем использовать глобальную переменную
     loop = asyncio.get_running_loop()                      # сохраняем текущий event loop
     Bot.set_current(bot)                                           # установить bot в контекст
+    Dispatcher.set_current(dp)
     print("BOT STARTED", flush=True)                          # лог старта
 
     await bot.delete_webhook(drop_pending_updates=True)  
