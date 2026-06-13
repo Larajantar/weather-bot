@@ -32,19 +32,19 @@ class Handler(BaseHTTPRequestHandler):                  # класс обраб�
     
     def do_POST(self):                                      # вызывается при POST запросе (Telegram использует POST)
         if self.path == WEBHOOK_PATH:                    # если запрос пришёл на /webhook
-
+            print("WEBHOOK HIT", flush=True)
+            
             content_length = int(self.headers.get("Content-Length", 0))  # длина тела запроса
-
             body = self.rfile.read(content_length)                    # читаем тело запроса (байты)
-
+            
             data = json.loads(body.decode("utf-8"))                    # превращаем JSON → dict
-
-            update = Update(**data)                                      # создаём объект Update из данных
+            
+            update = Update.de_json(data, bot)                                     # создаём объект Update из данных                                     
 
             # передаём обработку update в главный async loop
             loop.call_soon_threadsafe(
                 asyncio.create_task,                                      # создаём асинхронную задачу
-                dp.feed_update(bot, update)                            # передаём update в aiogram
+                dp.process_update(update)                                # передаём update в aiogram
             )
 
             self.send_response(200)                                      # отвечаем HTTP 200 (успех)
