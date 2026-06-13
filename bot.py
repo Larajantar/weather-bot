@@ -44,6 +44,7 @@ class Handler(BaseHTTPRequestHandler):                  # класс обраб�
             loop.call_soon_threadsafe(
                 asyncio.create_task,
                 dp.process_update(types.Update(**data))                      # передаём update в aiogram                                                                      
+            )
 
             self.send_response(200)                                      # отвечаем HTTP 200 (успех)
             self.end_headers()                                      # заканчиваем ответ
