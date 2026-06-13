@@ -34,7 +34,7 @@ class Handler(BaseHTTPRequestHandler):
             
             loop.call_soon_threadsafe(
                 asyncio.create_task,
-                dp.process_update(update)
+                dp.feed_update(bot, update)
             )
 
             self.send_response(200)
