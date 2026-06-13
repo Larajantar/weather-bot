@@ -1,6 +1,7 @@
 import os                  # работа с переменными окружения (PORT, BASE_URL)
 import asyncio              # асинхронный движок Python (используется aiogram)
 import json                  # для обработки JSON (Telegram шлёт JSON)
+import aiogram 
 from http.server import BaseHTTPRequestHandler, HTTPServer  # встроенный HTTP сервер
 
 from aiogram import Bot, Dispatcher, types      # библиотека Telegram-бота
