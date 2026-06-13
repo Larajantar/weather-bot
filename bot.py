@@ -1,5 +1,6 @@
 import os
 import asyncio
+import json
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from aiogram import Bot, Dispatcher, types
@@ -14,6 +15,7 @@ PORT = int(os.environ.get("PORT", 10000))
 BASE_URL = os.environ.get("BASE_URL")  # например https://weather-bot-xam1.onrender.com
 if not BASE_URL:
     raise ValueError("BASE_URL is not set")
+BASE_URL = BASE_URL.rstrip("/")
 WEBHOOK_PATH = "/webhook"
 WEBHOOK_URL = f"{BASE_URL}{WEBHOOK_PATH}"
 
@@ -25,8 +27,10 @@ class Handler(BaseHTTPRequestHandler):
         if self.path == WEBHOOK_PATH:
             content_length = int(self.headers.get("Content-Length", 0))
             body = self.rfile.read(content_length)
-
-            update = Update.de_json(body.decode("utf-8"), bot)
+            
+            data = json.loads(body.decode("utf-8"))
+            update = Update(**data)
+            update.bot = bot
             
             loop.call_soon_threadsafe(
                 asyncio.create_task,
@@ -44,6 +48,10 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.end_headers()
         self.wfile.write(b"OK")
+    
+    def do_HEAD(self):
+        self.send_response(200)
+        self.end_headers()
 
 def run_http_server():
     print("HTTP SERVER STARTED", flush=True)
