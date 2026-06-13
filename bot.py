@@ -30,7 +30,6 @@ class Handler(BaseHTTPRequestHandler):
             
             data = json.loads(body.decode("utf-8"))
             update = Update(**data)
-            update.bot = bot
             
             loop.call_soon_threadsafe(
                 asyncio.create_task,
