@@ -97,7 +97,7 @@ async def compare_start(msg: types.Message):
         text="Выбери первый город"
     )
 
-@dp.message_handler(lambda msg: msg.text in ["Москва", "Одинцово", "Питер", "Гатчина"])
+@dp.message_handler()
 async def handle_city(msg: types.Message):
     user_id = msg.from_user.id
 
