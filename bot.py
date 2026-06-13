@@ -39,15 +39,11 @@ class Handler(BaseHTTPRequestHandler):                  # класс обраб�
             content_length = int(self.headers.get("Content-Length", 0))  # длина тела запроса
             body = self.rfile.read(content_length)                    # читаем тело запроса (байты)
             
-            data = json.loads(body.decode("utf-8"))                    # превращаем JSON → dict
+            data = json.loads(body.decode("utf-8"))                    # превращаем JSON → dict            
             
-            update = Update.de_json(data, bot)                                     # создаём объект Update из данных                                     
-
-            # передаём обработку update в главный async loop
             loop.call_soon_threadsafe(
-                asyncio.create_task,                                      # создаём асинхронную задачу
-                dp.process_update(update)                                # передаём update в aiogram
-            )
+                asyncio.create_task,
+                dp.process_update(types.Update(**data))                      # передаём update в aiogram                                                                      
 
             self.send_response(200)                                      # отвечаем HTTP 200 (успех)
             self.end_headers()                                      # заканчиваем ответ
