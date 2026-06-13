@@ -9,7 +9,7 @@ CITIES = {
     "Гатчина": (59.57, 30.12)
 }
 
-BASE_URL = "https://api.open-meteo.com/v1/forecast"
+BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
 # перевод кода погоды в текст
 def get_weather_description(code):
