@@ -6,6 +6,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer  # встроенны
 from aiogram import Bot, Dispatcher, types      # библиотека Telegram-бота
 from aiogram.types import Update              # объект входящего события от Telegram
 from config import BOT_TOKEN                  # токен бота из файла config
+print(aiogram.__version__, flush=True)
 
 loop = None                                  # сюда сохраним главный asyncio loop (нужен для потоков)
 
