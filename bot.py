@@ -12,7 +12,10 @@ print(aiogram.__version__, flush=True)
 loop = None  
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot)
-user_compare = {}    
+user_compare = {}  
+weather_cache = {}        # для текста
+weather_raw_cache = {}    # для (t, h)
+
 
 # ======================
 # PORT (для Render)
@@ -110,9 +113,25 @@ async def handle_city(msg: types.Message):
 
         elif len(user_compare[user_id]) == 2:
             city1, city2 = user_compare[user_id]
+            if city1 == city2:
+                await bot.send_message(
+                    chat_id=msg.chat.id,
+                    text="⚠️ Выбраны одинаковые города"
+                )
+                del user_compare[user_id]
+                return
 
-            t1, h1 = get_raw_weather(city1)
-            t2, h2 = get_raw_weather(city2)
+            if city1 in weather_raw_cache:
+                t1, h1 = weather_raw_cache[city1]
+            else:
+                t1, h1 = get_raw_weather(city1)
+                weather_raw_cache[city1] = (t1, h1)            
+
+            if city2 in weather_raw_cache:
+                t2, h2 = weather_raw_cache[city2]
+            else:
+                t2, h2 = get_raw_weather(city2)
+                weather_raw_cache[city2] = (t2, h2)
 
             temp_diff = round(t1 - t2, 1)
             hum_diff = round(h1 - h2, 1)
@@ -136,8 +155,15 @@ async def handle_city(msg: types.Message):
 
             del user_compare[user_id]			# ✅ сброс
             return
-
-    result = get_weather(msg.text)				# ✅ ВАЖНО: обычная погода (вынесено наружу!)
+    
+    city = msg.text
+    
+    if city in weather_cache:
+        result = weather_cache[city]
+    else:
+        result = get_weather(city)
+        weather_cache[city] = result                # ✅ ВАЖНО: обычная погода (вынесено наружу!)
+				
     await bot.send_message(
         chat_id=msg.chat.id,
         text=result
