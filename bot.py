@@ -17,19 +17,19 @@ PORT = int(os.environ.get("PORT", 10000))
 # ======================
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
-        print("HTTP GET")
+        print("HTTP GET", flush=True)
         self.send_response(200)
         self.end_headers()
         self.wfile.write(b"OK")
 
     def do_HEAD(self):
-        print("HTTP HEAD")
+        print("HTTP HEAD", flush=True)
         self.send_response(200)
         self.end_headers()
 
 
 def run_http_server():
-    print("HTTP SERVER STARTED")
+    print("HTTP SERVER STARTED", flush=True)
 
     server = HTTPServer(("0.0.0.0", PORT), Handler)
     server.serve_forever()
@@ -44,7 +44,7 @@ dp = Dispatcher(bot)
 
 @dp.message_handler()
 async def echo(msg: types.Message):
-    print("MESSAGE:", msg.text)
+    print("MESSAGE:", msg.text, flush=True)
     await msg.answer("Температура в Москве: 20°C")
 
 
@@ -53,11 +53,11 @@ async def echo(msg: types.Message):
 # ======================
 
 async def main():
-    print("BOT STARTED")
+    print("BOT STARTED", flush=True)
 
     try:
         await bot.delete_webhook(drop_pending_updates=True)
-        print("WEBHOOK CLEARED")
+        print("WEBHOOK CLEARED", flush=True)
 
         loop = asyncio.get_running_loop()
         loop.run_in_executor(None, run_http_server)
@@ -74,5 +74,5 @@ async def main():
 # RUN
 # ======================
 if __name__ == "__main__":
-    print("MAIN START")
+    print("MAIN START", flush=True)
     asyncio.run(main())
