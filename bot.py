@@ -56,31 +56,21 @@ class Handler(BaseHTTPRequestHandler):                  # класс обраб�
             self.send_response(404)                                      # говорим "не найдено"
             self.end_headers()
 
-    def do_GET(self):                                      # обработка GET (Render проверяет, жив ли сервер)
-        print("HTTP GET", flush=True)                    # лог
-
+    def do_GET(self):                                      			# обработка GET (Render проверяет, жив ли сервер)
+        print("HTTP GET", flush=True)                    			# лог
         self.send_response(200)                                      # отвечаем OK
         self.end_headers()
-
         self.wfile.write(b"OK")                                      # отправляем текст "OK"
 
-    def do_HEAD(self):                                      # обработка HEAD (Render иногда шлёт)
+    def do_HEAD(self):                                      	# обработка HEAD (Render иногда шлёт)
         self.send_response(200)                                      # отвечаем OK
         self.end_headers()
 
 # функция запуска HTTP сервера
 def run_http_server():
     print("HTTP SERVER STARTED", flush=True)                    # лог старта
-
-    server = HTTPServer(("0.0.0.0", PORT), Handler)  
-                                                                # создаём сервер:
-                                                                # 0.0.0.0 = слушаем все интерфейсы
-                                                                # PORT = порт
-                                                                # Handler = обработчик
-
+    server = HTTPServer(("0.0.0.0", PORT), Handler)  			# создаём сервер: 0.0.0.0 = слушаем все интерфейсы, PORT = порт, Handler = обработчик
     server.serve_forever()                                      # запуск сервера (бесконечный цикл)
-
-
 
 @dp.message_handler(commands=['start'])
 async def start(msg: types.Message):
@@ -108,12 +98,11 @@ async def compare_start(msg: types.Message):
 async def handle_city(msg: types.Message):
     user_id = msg.from_user.id
 
-    # ✅ если в режиме сравнения
     if user_id in user_compare:
         user_compare[user_id].append(msg.text)
 
-        if len(user_compare[user_id]) == 1:           
-	        await bot.send_message(
+        if len(user_compare[user_id]) == 1:
+            await bot.send_message(
                 chat_id=msg.chat.id,
                 text="Выбери второй город"
             )
@@ -145,12 +134,10 @@ async def handle_city(msg: types.Message):
                 text=result
             )
 
-            # ✅ сброс
-            del user_compare[user_id]
+            del user_compare[user_id]			# ✅ сброс
             return
 
-    # ✅ ВАЖНО: обычная погода (вынесено наружу!)
-    result = get_weather(msg.text)
+    result = get_weather(msg.text)				# ✅ ВАЖНО: обычная погода (вынесено наружу!)
     await bot.send_message(
         chat_id=msg.chat.id,
         text=result
