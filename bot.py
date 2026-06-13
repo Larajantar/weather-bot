@@ -94,9 +94,12 @@ dp = Dispatcher(bot)                                      # создаём ди�
                                                                         # обработчик всех входящих сообщений
 @dp.message_handler()
 async def echo(msg: types.Message):  
-    print("MESSAGE:", msg.text, flush=True)                            # вывод текста сообщения в лог
-
-    await msg.answer("Температура в Москве: 20°C")                    # отправка ответа пользователю
+    print("MESSAGE:", msg.text, flush=True)                            # вывод текста сообщения в лог  
+    await bot.send_message(
+        chat_id=msg.chat.id,
+        text="Температура в Москве: 20°C"
+    )                                                                    # отправка ответа пользователю
+                    
 
 
 # ======================
@@ -109,12 +112,9 @@ async def main():
     Dispatcher.set_current(dp)
     print("BOT STARTED", flush=True)                          # лог старта
 
-    await bot.delete_webhook(drop_pending_updates=True)  
-    # удаляем старый webhook (если был)
-    # drop_pending_updates=True = очищаем очередь сообщений
+    await bot.delete_webhook(drop_pending_updates=True)          # удаляем старый webhook (если был), drop_pending_updates=True = очищаем очередь сообщений
 
-    await bot.set_webhook(WEBHOOK_URL)  
-    # устанавливаем webhook → Telegram будет слать POST-запросы сюда
+    await bot.set_webhook(WEBHOOK_URL)                          # устанавливаем webhook → Telegram будет слать POST-запросы сюда
 
     print(f"WEBHOOK SET: {WEBHOOK_URL}", flush=True)  # выводим URL webhook
 
