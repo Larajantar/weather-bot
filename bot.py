@@ -3,34 +3,50 @@ import asyncio
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from aiogram import Bot, Dispatcher, types
+from aiogram.types import Update
 from config import BOT_TOKEN
-
+loop = None
 
 # ======================
 # PORT (для Render)
 # ======================
 PORT = int(os.environ.get("PORT", 10000))
-
+BASE_URL = os.environ.get("BASE_URL")  # например https://weather-bot-xam1.onrender.com
+if not BASE_URL:
+    raise ValueError("BASE_URL is not set")
+WEBHOOK_PATH = "/webhook"
+WEBHOOK_URL = f"{BASE_URL}{WEBHOOK_PATH}"
 
 # ======================
 # HTTP SERVER
 # ======================
-class Handler(BaseHTTPRequestHandler):
+class Handler(BaseHTTPRequestHandler):    
+    def do_POST(self):
+        if self.path == WEBHOOK_PATH:
+            content_length = int(self.headers.get("Content-Length", 0))
+            body = self.rfile.read(content_length)
+
+            update = Update.de_json(body.decode("utf-8"), bot)
+            
+            loop.call_soon_threadsafe(
+                asyncio.create_task,
+                dp.process_update(update)
+            )
+
+            self.send_response(200)
+            self.end_headers()
+        else:
+            self.send_response(404)
+            self.end_headers()
+
     def do_GET(self):
         print("HTTP GET", flush=True)
         self.send_response(200)
         self.end_headers()
         self.wfile.write(b"OK")
 
-    def do_HEAD(self):
-        print("HTTP HEAD", flush=True)
-        self.send_response(200)
-        self.end_headers()
-
-
 def run_http_server():
     print("HTTP SERVER STARTED", flush=True)
-
     server = HTTPServer(("0.0.0.0", PORT), Handler)
     server.serve_forever()
 
@@ -53,22 +69,25 @@ async def echo(msg: types.Message):
 # ======================
 
 async def main():
+    global loop
+    loop = asyncio.get_running_loop()  
+    
     print("BOT STARTED", flush=True)
 
-    try:
-        await bot.delete_webhook(drop_pending_updates=True)
-        print("WEBHOOK CLEARED", flush=True)
+    await bot.delete_webhook(drop_pending_updates=True)
 
-        loop = asyncio.get_running_loop()
-        loop.run_in_executor(None, run_http_server)
+    # ставим webhook
+    await bot.set_webhook(WEBHOOK_URL)
+    print(f"WEBHOOK SET: {WEBHOOK_URL}", flush=True)
 
-        print("START POLLING")
+    # запускаем сервер
+    import threading
+    threading.Thread(target=run_http_server, daemon=True).start()
 
-        await dp.start_polling(bot)
+    # держим процесс живым
+    while True:
+        await asyncio.sleep(3600)
 
-    except Exception as e:
-        print("MAIN ERROR:", e)
-        raise
 
 # ======================
 # RUN
