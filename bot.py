@@ -40,10 +40,16 @@ class Handler(BaseHTTPRequestHandler):                  # класс обраб�
             body = self.rfile.read(content_length)                    # читаем тело запроса (байты)
             
             data = json.loads(body.decode("utf-8"))                    # превращаем JSON → dict            
+            update = types.Update(**data)
+            
+            def process():
+                Bot.set_current(bot)
+                Dispatcher.set_current(dp)
+                return dp.process_update(update)
             
             loop.call_soon_threadsafe(
                 asyncio.create_task,
-                dp.process_update(types.Update(**data))                      # передаём update в aiogram                                                                      
+                process()
             )
 
             self.send_response(200)                                      # отвечаем HTTP 200 (успех)
